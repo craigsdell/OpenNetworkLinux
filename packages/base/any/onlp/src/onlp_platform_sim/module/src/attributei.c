@@ -57,3 +57,35 @@ onlp_attributei_free(onlp_oid_t id, const char* attribute, void* value)
 
     return ONLP_STATUS_E_UNSUPPORTED;
 }
+
+int
+onlp_attributei_onie_info_get(onlp_oid_t oid, onlp_onie_info_t* rp)
+{
+    if(oid != ONLP_OID_CHASSIS) {
+        return ONLP_STATUS_E_UNSUPPORTED;
+    }
+
+    if(rp == NULL) {
+        return 1;
+    }
+    return ONLP_STATUS_E_UNSUPPORTED;
+}
+
+int
+onlp_attributei_asset_info_get(onlp_oid_t oid, onlp_asset_info_t* rp)
+{
+    if(oid != ONLP_OID_CHASSIS) {
+        return ONLP_STATUS_E_UNSUPPORTED;
+    }
+
+    if(rp == NULL) {
+        return 1;
+    }
+
+    int rv;
+    uint8_t v[5] = {0};
+
+    rp->oid = oid;
+    rp->firmware_revision = aim_fstrdup("00.01.02");
+    return rv;
+}

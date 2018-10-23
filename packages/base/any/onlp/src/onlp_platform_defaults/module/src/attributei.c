@@ -33,3 +33,5 @@ __ONLP_DEFAULTI_IMPLEMENTATION(onlp_attributei_supported(onlp_oid_t id, const ch
 __ONLP_DEFAULTI_IMPLEMENTATION(onlp_attributei_set(onlp_oid_t id, const char* attribute, void* value));
 __ONLP_DEFAULTI_IMPLEMENTATION(onlp_attributei_get(onlp_oid_t id, const char* attribute, void** value));
 __ONLP_DEFAULTI_IMPLEMENTATION(onlp_attributei_free(onlp_oid_t id, const char* attribute, void* value));
+__ONLP_DEFAULTI_IMPLEMENTATION(onlp_attributei_onie_info_get(onlp_oid_t oid, onlp_onie_info_t* rp));
+__ONLP_DEFAULTI_IMPLEMENTATION(onlp_attributei_asset_info_get(onlp_oid_t oid, onlp_asset_info_t* rp));
