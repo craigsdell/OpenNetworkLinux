@@ -1,0 +1,1 @@
+!include $ONL_TEMPLATES/platform-config-platform.yml ARCH=amd64 VENDOR=dell BASENAME=x86-64-dell-z9100-c2538 REVISION=r0
