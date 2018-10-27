@@ -134,9 +134,9 @@ static enum onlp_led_mode_e onlp_get_led_mode(int id)
     uint8_t data;
 
     /* Grab the led data */
-    smbus_set_perms();
-    smbus_read_byte(busaddr_map[id].addr, &data);
-    smbus_unset_perms();
+    ONLP_IF_ERROR_RETURN(smbus_set_perms());
+    ONLP_IF_ERROR_RETURN(smbus_read_byte(busaddr_map[id].addr, &data));
+    ONLP_IF_ERROR_RETURN(smbus_unset_perms());
 
     /* convert it to ONLP mode */
     int i;
@@ -159,9 +159,9 @@ static int onlp_set_led_mode(int id, enum onlp_led_mode_e mode)
     {
         if (id == led_map[i].id && mode == led_map[i].onlp_led_mode)
         {
-            smbus_set_perms();
-            smbus_write_byte(busaddr_map[id].addr, led_map[i].driver_led_mode);
-            smbus_unset_perms();
+            ONLP_IF_ERROR_RETURN(smbus_set_perms());
+            ONLP_IF_ERROR_RETURN(smbus_write_byte(busaddr_map[id].addr, led_map[i].driver_led_mode));
+            ONLP_IF_ERROR_RETURN(smbus_unset_perms());
             return 0;
         }
     }
@@ -174,9 +174,9 @@ static char onlp_get_led_char(int lid)
     int i;
 
     /* Grab the stack indicator data */
-    smbus_set_perms();
-    smbus_read_byte(busaddr_map[lid].addr, &data);
-    smbus_unset_perms();
+    ONLP_IF_ERROR_RETURN(smbus_set_perms());
+    ONLP_IF_ERROR_RETURN(smbus_read_byte(busaddr_map[lid].addr, &data));
+    ONLP_IF_ERROR_RETURN(smbus_unset_perms());
 
     /* convert it to a char */
     for (i=0; i < sizeof(indicator_map)/sizeof(indicator_map[0]); i++) {
@@ -194,9 +194,9 @@ static int onlp_set_led_char(int lid, char c)
     /* Convert to indicator out */
     for (i=0; i < sizeof(indicator_map)/sizeof(indicator_map[0]); i++) {
       if (indicator_map[i].ch == c) {
-        smbus_set_perms();
-        smbus_write_byte(busaddr_map[lid].addr, indicator_map[i].out);
-        smbus_unset_perms();
+        ONLP_IF_ERROR_RETURN(smbus_set_perms());
+        ONLP_IF_ERROR_RETURN(smbus_write_byte(busaddr_map[lid].addr, indicator_map[i].out));
+        ONLP_IF_ERROR_RETURN(smbus_unset_perms());
       }
     }
     printf("onlp_set_led_char invalid character %c\n", c);

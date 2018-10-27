@@ -81,10 +81,12 @@ get_temp_value(int id) {
   uint8_t low;
   uint16_t value_addr = temp_addresses[id].value_addr;
 
+  ONLP_IF_ERROR_RETURN(smbus_set_perms());
   ONLP_IF_ERROR_RETURN(smbus_read_byte(value_addr, &high));
   ONLP_IF_ERROR_RETURN(smbus_read_byte(value_addr+1, &low));
+  ONLP_IF_ERROR_RETURN(smbus_unset_perms());
 
-  return((high<<8)|(low));
+  return(((high<<8)|(low))*100);
 }
 
 int
