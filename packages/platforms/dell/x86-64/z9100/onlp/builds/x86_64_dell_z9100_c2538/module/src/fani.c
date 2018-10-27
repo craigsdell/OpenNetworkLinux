@@ -40,6 +40,8 @@
 typedef struct fan_cfg {
     uint speed_addr;
     int max_speed;
+    uint16_t presence_addr;
+    uint8_t presence_mask;
     uint16_t status_addr;
     uint8_t status_mask;
 } fan_cfg_t;
@@ -47,18 +49,18 @@ typedef struct fan_cfg {
 static fan_cfg_t fans_cfg[] =
 {
     { },             /* Not Used */
-    { 0xf3, 22500, 0x115, 0x01 }, /* fan-0 */
-    { 0xf5, 22500, 0x115, 0x02 }, /* fan-1 */
-    { 0xf7, 22500, 0x115, 0x04 }, /* fan-2 */
-    { 0xf9, 22500, 0x115, 0x08 }, /* fan-3 */
-    { 0xfb, 22500, 0x115, 0x10 }, /* fan-4 */
-    { 0xfd, 22500, 0x115, 0x20 }, /* fan-5 */
-    { 0xff, 22500, 0x115, 0x40 }, /* fan-6 */
-    { 0x101, 22500, 0x115, 0x80 }, /* fan-7 */
-    { 0x103, 22500, 0x114, 0x01 }, /* fan-8 */
-    { 0x105, 22500, 0x114, 0x02 }, /* fan-9 */
-    { 0x23b, 22500, 0x23d, 0x02 }, /* psu-fan-0 */
-    { 0x274, 22500, 0x276, 0x02 }, /* psu-fan-1 */
+    { 0xf3,  22500, 0x113, 0x01, 0x115, 0x01 }, /* fan-0 */
+    { 0xf5,  22500, 0x113, 0x01, 0x115, 0x02 }, /* fan-1 */
+    { 0xf7,  22500, 0x113, 0x02, 0x115, 0x04 }, /* fan-2 */
+    { 0xf9,  22500, 0x113, 0x02, 0x115, 0x08 }, /* fan-3 */
+    { 0xfb,  22500, 0x113, 0x04, 0x115, 0x10 }, /* fan-4 */
+    { 0xfd,  22500, 0x113, 0x04, 0x115, 0x20 }, /* fan-5 */
+    { 0xff,  22500, 0x113, 0x08, 0x115, 0x40 }, /* fan-6 */
+    { 0x101, 22500, 0x113, 0x08, 0x115, 0x80 }, /* fan-7 */
+    { 0x103, 22500, 0x113, 0x10, 0x114, 0x01 }, /* fan-8 */
+    { 0x105, 22500, 0x113, 0x10, 0x114, 0x02 }, /* fan-9 */
+    { 0x23b, 22500, 0x23d, 0x04, 0x23d, 0x02 }, /* psu-fan-0 */
+    { 0x274, 22500, 0x276, 0x04, 0x276, 0x02 }, /* psu-fan-1 */
 };
 
 #define MAKE_FAN_INFO_NODE_ON_MAIN_BOARD(_id)                           \
@@ -113,16 +115,48 @@ get_fan_speed(unsigned int addr) {
 }
 
 int
+onlp_fani_hdr_get(onlp_oid_t oid, onlp_oid_hdr_t* hdr)
+{
+    uint8_t presence;
+    uint8_t status;
+    int id = ONLP_OID_ID_GET(oid);
+
+    *hdr = fan_info[id].hdr;
+
+    /* set permissions */
+    ONLP_IF_ERROR_RETURN(smbus_set_perms());
+
+    /* Check presence */
+    ONLP_IF_ERROR_RETURN(smbus_read_byte(fans_cfg[id].presence_addr, &presence));
+    if ((presence&fans_cfg[id].presence_mask) == 0) {
+      ONLP_OID_STATUS_FLAG_SET(hdr, PRESENT);
+
+      /* Check status */
+      ONLP_IF_ERROR_RETURN(smbus_read_byte(fans_cfg[id].status_addr, &status));
+      if ((status&fans_cfg[id].status_mask) != 0) {
+        ONLP_OID_STATUS_FLAG_SET(hdr, FAILED);
+      }
+    }
+
+    /* unset permissions */
+    /* Note: we don't really care too much about unsetting perms so we're not
+             concerned about error situations above where we return early. */
+    ONLP_IF_ERROR_RETURN(smbus_unset_perms());
+
+    return ONLP_STATUS_OK;
+}
+
+int
 onlp_fani_info_get(onlp_oid_t oid, onlp_fan_info_t* info)
 {
     int id = ONLP_OID_ID_GET(oid);
     *info = fan_info[id];
-    uint8_t status;
 
-    /* Check status */
-    ONLP_IF_ERROR_RETURN(smbus_read_byte(fans_cfg[id].status_addr, &status));
-    if ((status&fans_cfg[id].status_mask) != 0) {
-      ONLP_OID_STATUS_FLAG_SET(&info->hdr, PRESENT);
+    /* Get hdr */
+    ONLP_IF_ERROR_RETURN(onlp_fani_hdr_get(oid, &info->hdr));
+
+    /* If present check speed */
+    if (ONLP_OID_STATUS_FLAG_IS_SET(&info->hdr, PRESENT)) {
 
       /* Grab speed */
       info->rpm = get_fan_speed(fans_cfg[id].speed_addr);
@@ -130,9 +164,6 @@ onlp_fani_info_get(onlp_oid_t oid, onlp_fan_info_t* info)
         return info->rpm;
       }
       info->percentage = (info->rpm * 100) / fans_cfg[id].max_speed;
-
-    } else {
-      ONLP_OID_STATUS_FLAG_SET(&info->hdr, FAILED);
     }
 
     return ONLP_STATUS_OK;
