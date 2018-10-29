@@ -51,5 +51,5 @@ onlp_platformi_manage_fans(void)
 int
 onlp_platformi_manage_leds(void)
 {
-    return ONLP_STATUS_E_UNSUPPORTED;
+    return ONLP_STATUS_OK;
 }
