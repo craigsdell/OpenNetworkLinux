@@ -64,9 +64,9 @@ onlp_attributei_asset_info_get(onlp_oid_t oid, onlp_asset_info_t* rp)
     ONLP_IF_ERROR_RETURN(smbus_set_perms());
     if(ONLP_SUCCESS(rv = smbus_read_byte(SMBUS_FIRMWARE_ADDR, v)) &&
        ONLP_SUCCESS(rv = smbus_read_byte(CPLD1_ADDR, v+1)) &&
-       ONLP_SUCCESS(rv = onlp_i2c_read(CPLD2_BUS, CPLD_ADDR, CPLD_VER_OFFSET, 1, v+2, ONLP_I2C_F_FORCE)) &&
-       ONLP_SUCCESS(rv = onlp_i2c_read(CPLD3_BUS, CPLD_ADDR, CPLD_VER_OFFSET, 1, v+3, ONLP_I2C_F_FORCE)) &&
-       ONLP_SUCCESS(rv = onlp_i2c_read(CPLD4_BUS, CPLD_ADDR, CPLD_VER_OFFSET, 1, v+4, ONLP_I2C_F_FORCE))) {
+       ONLP_SUCCESS(rv = i2c_cpld_read(CPLD2_BUS, CPLD_ADDR, CPLD_VER_OFFSET, 1, v+2, ONLP_I2C_F_FORCE)) &&
+       ONLP_SUCCESS(rv = i2c_cpld_read(CPLD3_BUS, CPLD_ADDR, CPLD_VER_OFFSET, 1, v+3, ONLP_I2C_F_FORCE)) &&
+       ONLP_SUCCESS(rv = i2c_cpld_read(CPLD4_BUS, CPLD_ADDR, CPLD_VER_OFFSET, 1, v+4, ONLP_I2C_F_FORCE))) {
 
         rp->firmware_revision =
             aim_fstrdup("%2.2x.%2.2x.%2.2x.%2.2x.%2.2x", v[0], v[1], v[2], v[3], v[4]);

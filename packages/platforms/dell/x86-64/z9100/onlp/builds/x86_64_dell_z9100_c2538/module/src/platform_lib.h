@@ -55,6 +55,8 @@ int smbus_set_perms();
 int smbus_unset_perms();
 int smbus_read_byte(uint16_t addr, uint8_t *data);
 int smbus_write_byte(uint16_t addr, uint8_t data);
+int i2c_cpld_read(int bus, uint8_t addr, uint8_t offset, int size,
+                  uint8_t* rdata, uint32_t flags);
 
 #define PSU1_ID   1
 #define PSU2_ID   2

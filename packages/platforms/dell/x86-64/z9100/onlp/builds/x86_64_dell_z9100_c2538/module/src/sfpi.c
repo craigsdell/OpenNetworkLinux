@@ -107,32 +107,25 @@ onlp_sfpi_is_present(onlp_oid_id_t port)
      * Return 0 if not present.
      * Return < 0 if error.
      */
-    int present;
     uint8_t data;
     const port_map_t *pm;
 
     /* check port and then get portmap entry */
-    if (port < 0 || sizeof(portmap)/sizeof(portmap[0]) ) {
+    if (port < 0 || sizeof(portmap)/sizeof(portmap[0]) <= port ) {
       AIM_LOG_ERROR("invalid port %d\n", port);
       return ONLP_STATUS_E_INTERNAL;
     }
     pm = &portmap[port];
 
     /* Grab presence byte */
-    if (onlp_i2c_read(pm->p.bus, pm->p.addr, pm->p.offset,
+    if (i2c_cpld_read(pm->p.bus, pm->p.addr, pm->p.offset,
                       1, &data, ONLP_I2C_F_FORCE) < 0) {
         AIM_LOG_ERROR("Unable to read present status from port(%d)\r\n", port);
         return ONLP_STATUS_E_INTERNAL;
     }
 
     /* Check against mask - inverted */
-    if ((pm->p.mask&data) == 0) {
-        return 1;
-    } else {
-        return 0;
-    }
-
-    return present;
+    return (((pm->p.mask & data) == 0) ? 1: 0);
 }
 
 int
@@ -142,38 +135,38 @@ onlp_sfpi_presence_bitmap_get(onlp_sfp_bitmap_t* dst)
     uint32_t presence_all = 0;
     uint8_t data[2];
 
-    /* grab cpld2 presence bits */
-    if (onlp_i2c_read(14, 0x3e, 0x16, 2, &data[0], ONLP_I2C_F_FORCE) < 0) {
+    /* grab cpld4 presence bits */
+    if (i2c_cpld_read(16, 0x3e, 0x16, 2, &data[0], ONLP_I2C_F_FORCE) < 0) {
         AIM_LOG_ERROR("Unable to read present status from cpld2\n");
         return ONLP_STATUS_E_INTERNAL;
     }
-    presence_all = data[0];
-    presence_all <<= 4;
-    presence_all |= data[1]&0x0f;
+    presence_all |= data[1]&0x03;
+    presence_all <<= 8;
+    presence_all |= data[0];
 
     /* Grab cpld3 presence bits */
-    if (onlp_i2c_read(15, 0x3e, 0x16, 2, &data[0], ONLP_I2C_F_FORCE) < 0) {
+    if (i2c_cpld_read(15, 0x3e, 0x16, 2, &data[0], ONLP_I2C_F_FORCE) < 0) {
         AIM_LOG_ERROR("Unable to read present status from cpld3\n");
         return ONLP_STATUS_E_INTERNAL;
     }
-    presence_all <<= 8;
-    presence_all |= data[0];
     presence_all <<= 2;
     presence_all |= data[1]&0x03;
+    presence_all <<= 8;
+    presence_all |= data[0];
 
-    /* cpld4 */
-    if (onlp_i2c_read(16, 0x3e, 0x16, 2, &data[0], ONLP_I2C_F_FORCE) < 0) {
+    /* cpld2 */
+    if (i2c_cpld_read(14, 0x3e, 0x16, 2, &data[0], ONLP_I2C_F_FORCE) < 0) {
         AIM_LOG_ERROR("Unable to read present status from cpld4\n");
         return ONLP_STATUS_E_INTERNAL;
     }
+    presence_all <<= 4;
+    presence_all |= data[1]&0x0f;
     presence_all <<= 8;
     presence_all |= data[0];
-    presence_all <<= 2;
-    presence_all |= data[1]&0x03;
 
     /* Populate bitmap */
     for(i = 0; presence_all; i++) {
-        AIM_BITMAP_MOD(dst, i, (presence_all & 1));
+        AIM_BITMAP_MOD(dst, i, ((presence_all&1) ? 0: 1));
         presence_all >>= 1;
     }
 
@@ -184,7 +177,7 @@ int
 onlp_sfpi_dev_read(onlp_oid_id_t port, int devaddr, int addr,
                    uint8_t* dst, int size)
 {
-    int bus = portmap[port].id;
+    int bus = PORT_BUS_INDEX(port);
     return onlp_i2c_block_read(bus, devaddr, addr, size, dst, ONLP_I2C_F_FORCE);
 }
 
