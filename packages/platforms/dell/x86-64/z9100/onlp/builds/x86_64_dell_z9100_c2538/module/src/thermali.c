@@ -64,14 +64,14 @@ temp_address_t temp_addresses[] = {
 /* Static values */
 static onlp_thermal_info_t thermal_info_table__[] = {
     { }, /* Not used */
-    ONLP_CHASSIS_THERMAL_INFO_ENTRY_INIT(THERMAL_0, "Chassis Thermal Sensor 0"),
-    ONLP_CHASSIS_THERMAL_INFO_ENTRY_INIT(THERMAL_1, "Chassis Thermal Sensor 1"),
-    ONLP_CHASSIS_THERMAL_INFO_ENTRY_INIT(THERMAL_2, "Chassis Thermal Sensor 2"),
-    ONLP_CHASSIS_THERMAL_INFO_ENTRY_INIT(THERMAL_3, "Chassis Thermal Sensor 3"),
-    ONLP_CHASSIS_THERMAL_INFO_ENTRY_INIT(THERMAL_4, "Chassis Thermal Sensor 4"),
-    ONLP_CHASSIS_THERMAL_INFO_ENTRY_INIT(THERMAL_4, "Chassis Thermal Sensor 5"),
-    ONLP_CHASSIS_THERMAL_INFO_ENTRY_INIT(THERMAL_4, "Chassis Thermal Sensor 6"),
-    ONLP_CHASSIS_THERMAL_INFO_ENTRY_INIT(THERMAL_4, "Chassis Thermal Sensor 7"),
+    ONLP_CHASSIS_THERMAL_INFO_ENTRY_INIT(THERMAL_0, "CPU On-Board temp sensor"),
+    ONLP_CHASSIS_THERMAL_INFO_ENTRY_INIT(THERMAL_1, "BCM56960 On-Board-2 temp sensor"),
+    ONLP_CHASSIS_THERMAL_INFO_ENTRY_INIT(THERMAL_2, "System Inlet Ambient-1 temp sensor"),
+    ONLP_CHASSIS_THERMAL_INFO_ENTRY_INIT(THERMAL_3, "System Inlet Ambient-2 temp sensor"),
+    ONLP_CHASSIS_THERMAL_INFO_ENTRY_INIT(THERMAL_4, "BCM56960 On-Board-1 temp sensor"),
+    ONLP_CHASSIS_THERMAL_INFO_ENTRY_INIT(THERMAL_5, "System Inlet Reverse Airflow temp senor"),
+    ONLP_CHASSIS_THERMAL_INFO_ENTRY_INIT(THERMAL_6, "Temperature of PSU-1"),
+    ONLP_CHASSIS_THERMAL_INFO_ENTRY_INIT(THERMAL_7, "Temperature of PSU-2"),
 };
 
 int
