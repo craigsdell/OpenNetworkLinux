@@ -50,18 +50,31 @@ int onlp_fani_hw_init(uint32_t flags);
 int onlp_fani_sw_denit(void);
 
 /**
+ * @brief Validate a fan id.
+ * @param id The fan id.
+ */
+int onlp_fani_id_validate(onlp_oid_id_t id);
+
+/**
  * @brief Retrieve the fan's OID hdr.
- * @param id The fan OID.
+ * @param id The fan id.
  * @param[out] hdr Receives the OID header.
  */
 int onlp_fani_hdr_get(onlp_oid_id_t id, onlp_oid_hdr_t* hdr);
 
 /**
  * @brief Get the information structure for the given fan OID.
- * @param id The fan OID
+ * @param id The fan id
  * @param[out] rv Receives the fan information.
  */
 int onlp_fani_info_get(onlp_oid_id_t id, onlp_fan_info_t* rv);
+
+/**
+ * @brief Get the fan capabilities.
+ * @param id The fan id.
+ * @param[out] rv The fan capabilities
+ */
+int onlp_fani_caps_get(onlp_oid_id_t id, uint32_t* rv);
 
 /**
  * @brief Set the fan speed in RPM.

@@ -41,12 +41,17 @@ Foobar2
   @defgroup onlp-appication ONLP Application Interfaces
   @{
 
+    @defgroup system-interfaces General System Interfaces
+    These are general system interfaces.
+    @{
+      @defgroup platform Platform Initialization and Management
+      @defgroup stdattrs Standard Attribute Structures
+    @}
     @defgroup oid-interfaces General OID Interfaces
     These interfaces are available on all OIDs.
     @{
+      @defgroup oid OID General Interfaces
       @defgroup attributes Attribute Interface
-      @defgroup assets Asset Interface
-      @defgroup onie   ONIE Interface
     @}
 
     @defgroup oid-types OID Types
@@ -58,6 +63,7 @@ Foobar2
       @defgroup oid-fan Fans
       @defgroup oid-psu PSUs
       @defgroup oid-sfp SFPs
+      @defgroup oid-led LEDs
       @defgroup oid-generic Generics
     @}
   @}
@@ -65,12 +71,15 @@ Foobar2
   @defgroup onlp-platform Platform Implementation Interfaces
   These document the requires for implementing the platform interfaces.
   @{
-     @defgroup chassisi Chassis
-     @defgroup modulei  Modules
-     @defgroup thermali Thermals
-     @defgroup fani     Fans
-     @defgroup psui     PSUs
-     @defgroup sfpi     SFPs
+     @defgroup chassisi chassisi
+     @defgroup modulei  modulei
+     @defgroup thermali thermali
+     @defgroup fani     fani
+     @defgroup psui     psui
+     @defgroup sfpi     sfpi
+     @defgroup ledi     ledi
+     @defgroup generici generici
+     @defgroup attributei attributei
   @}
 
   @defgroup module-interfaces Module Documentation

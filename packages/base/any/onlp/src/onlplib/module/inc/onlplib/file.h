@@ -99,6 +99,30 @@ int onlp_file_vread_str(char** str, const char* fmt, va_list vargs);
 int onlp_file_read_str(char** str, const char* fmt, ...);
 
 /**
+ * @brief Read and place the contents of the given file into the
+ * given buffer.
+ * @param dst Destination buffer
+ * @param size Max size
+ * @param fmt The filename format string
+ * @param vargs The filename format args.
+ * @note The contents of the file are assume to be a string.
+ *       Trailing newlines are removed.
+ */
+int onlp_file_vread_str_dst(char* dst, int size, const char* fmt, va_list vargs);
+
+/**
+ * @brief Read and place the contents of the given file into the
+ * given buffer.
+ * @param dst Destination buffer
+ * @param size Max size
+ * @param fmt The filename format string
+ * @param ... The filename format args.
+ * @note The contents of the file are assume to be a string.
+ *       Trailing newlines are removed.
+ */
+int onlp_file_read_str_dst(char* dst, int size, const char* fmt, ...);
+
+/**
  * @brief Read and return the integer contents of the given file.
  * @param value Receives the integer value.
  * @param fmt The filename format string.
@@ -120,6 +144,15 @@ int onlp_file_read_int(int* value, const char* fmt, ...);
  * @param files Null terminated file list.
  */
 int onlp_file_read_int_max(int* value, char** files);
+
+
+/**
+ * @brief Join the contents of the given files.
+ * @param[out] Receives the joined string.
+ * @param string The join string.
+ * @param files The source files.
+ */
+int onlp_file_join_files(char** rv, const char* string, char** files);
 
 /**
  * @brief Write data to the given file.

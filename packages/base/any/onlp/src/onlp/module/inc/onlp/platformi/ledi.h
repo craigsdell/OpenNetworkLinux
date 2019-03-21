@@ -47,6 +47,12 @@ int onlp_ledi_hw_init(uint32_t flags);
 int onlp_ledi_sw_denit(void);
 
 /**
+ * @brief Validate an LED id.
+ * @param id The id.
+ */
+int onlp_ledi_id_validate(onlp_oid_id_t id);
+
+/**
  * @brief Get the LED header.
  * @param id The LED OID
  * @param[out] rv  Receives the header.
@@ -59,6 +65,13 @@ int onlp_ledi_hdr_get(onlp_oid_id_t id, onlp_oid_hdr_t* rv);
  * @param[out] rv  Receives the LED information.
  */
 int onlp_ledi_info_get(onlp_oid_id_t id, onlp_led_info_t* rv);
+
+/**
+ * @brief Get the caps for the given LED
+ * @param id The LED ID
+ * @param[out] rv Receives the caps.
+ */
+int onlp_ledi_caps_get(onlp_oid_id_t id, uint32_t* rv);
 
 /**
  * @brief Set the LED mode.
@@ -92,5 +105,8 @@ int onlp_ledi_char_set(onlp_oid_id_t id, char c);
 
 #define ONLP_PSU_LED_INFO_ENTRY_INIT(_id, _desc, _psu_id, _caps) \
     ONLP_LED_INFO_ENTRY_INIT(_id, _desc, ONLP_PSU_ID_CREATE(_psu_id), _caps)
+
+#define ONLP_FAN_LED_INFO_ENTRY_INIT(_id, _desc, _fan_id, _caps) \
+    ONLP_LED_INFO_ENTRY_INIT(_id, _desc, ONLP_FAN_ID_CREATE(_fan_id), _caps)
 
 #endif /* __ONLP_LED_H__ */
