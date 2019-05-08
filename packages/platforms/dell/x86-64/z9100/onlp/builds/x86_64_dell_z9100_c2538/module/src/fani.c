@@ -102,6 +102,9 @@ onlp_fan_info_t fan_info[] = {
     MAKE_FAN_INFO_NODE_ON_PSU(2),
 };
 
+#define VALID_ID(id) \
+    ((0 <= id && id < sizeof(fan_info)/sizeof(fan_info[0])) ? 1: 0)
+
 /* Read the fan speed */
 static int
 get_fan_speed(unsigned int addr) {
@@ -120,6 +123,10 @@ onlp_fani_hdr_get(onlp_oid_t oid, onlp_oid_hdr_t* hdr)
     uint8_t presence;
     uint8_t status;
     int id = ONLP_OID_ID_GET(oid);
+
+    if (!VALID_ID(id)) {
+        return ONLP_STATUS_E_PARAM;
+    }
 
     *hdr = fan_info[id].hdr;
 
@@ -150,6 +157,10 @@ int
 onlp_fani_info_get(onlp_oid_t oid, onlp_fan_info_t* info)
 {
     int id = ONLP_OID_ID_GET(oid);
+    if (!VALID_ID(id)) {
+        return ONLP_STATUS_E_PARAM;
+    }
+
     *info = fan_info[id];
 
     /* Get hdr */

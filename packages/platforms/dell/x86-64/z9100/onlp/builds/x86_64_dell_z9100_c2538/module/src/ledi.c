@@ -206,28 +206,35 @@ static int onlp_set_led_char(int lid, char c)
 int
 onlp_ledi_hdr_get(onlp_oid_t oid, onlp_oid_hdr_t* hdr)
 {
-    *hdr = linfo[ONLP_OID_ID_GET(oid)].hdr;
+    int  id;
+
+    id = ONLP_OID_ID_GET(oid);
+    if (!VALID_ID(id)) {
+        printf("invalid id: %d\n", id);
+        return ONLP_STATUS_E_INTERNAL;
+    }
+    *hdr = linfo[id].hdr;
     return 0;
 }
 
 int
-onlp_ledi_info_get(onlp_oid_t id, onlp_led_info_t* info)
+onlp_ledi_info_get(onlp_oid_t oid, onlp_led_info_t* info)
 {
-    int  local_id;
+    int  id;
 
-    local_id = ONLP_OID_ID_GET(id);
-    if (!VALID_ID(local_id)) {
-        printf("invalid id: %d\n", local_id);
+    id = ONLP_OID_ID_GET(oid);
+    if (!VALID_ID(id)) {
+        printf("invalid id: %d\n", id);
         return ONLP_STATUS_E_INTERNAL;
     }
 
 	/* Set the onlp_oid_hdr_t and capabilities */
-    *info = linfo[local_id];
+    *info = linfo[id];
 
-    if (local_id == STK_IND) {
-      info->character = onlp_get_led_char(local_id);
+    if (id == STK_IND) {
+      info->character = onlp_get_led_char(id);
     } else {
-      info->mode = onlp_get_led_mode(local_id);
+      info->mode = onlp_get_led_mode(id);
     }
 
     return ONLP_STATUS_OK;
@@ -240,13 +247,13 @@ onlp_ledi_info_get(onlp_oid_t id, onlp_led_info_t* info)
  * Only modes reported in the LED's capabilities will be attempted.
  */
 int
-onlp_ledi_mode_set(onlp_oid_t id, onlp_led_mode_t mode)
+onlp_ledi_mode_set(onlp_oid_t oid, onlp_led_mode_t mode)
 {
-    int  local_id;
+    int  id;
 
-    local_id = ONLP_OID_ID_GET(id);
+    id = ONLP_OID_ID_GET(oid);
 
-    if (!VALID_ID(local_id) || onlp_set_led_mode(local_id, mode) != 0)
+    if (!VALID_ID(id) || onlp_set_led_mode(id, mode) != 0)
     {
         return ONLP_STATUS_E_INTERNAL;
     }
@@ -258,13 +265,13 @@ onlp_ledi_mode_set(onlp_oid_t id, onlp_led_mode_t mode)
  * This function sets the LED character.
  */
 int
-onlp_ledi_char_set(onlp_oid_t id, char c)
+onlp_ledi_char_set(onlp_oid_t oid, char c)
 {
-    int  local_id;
+    int  id;
 
-    local_id = ONLP_OID_ID_GET(id);
+    id = ONLP_OID_ID_GET(oid);
 
-    if (!VALID_ID(local_id) || onlp_set_led_char(local_id, c) != 0)
+    if (!VALID_ID(id) || onlp_set_led_char(id, c) != 0)
     {
         return ONLP_STATUS_E_INTERNAL;
     }

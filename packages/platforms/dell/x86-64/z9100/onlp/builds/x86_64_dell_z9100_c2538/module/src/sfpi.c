@@ -74,6 +74,9 @@ static const port_map_t portmap[NUM_OF_SFP_PORT] = {
     { 25, { 16, 0x3e, 0x17, 0x02 } }      /* port 31 */
 };
 
+#define VALID_ID(id) \
+    ((0 <= id && id < sizeof(portmap)/sizeof(portmap[0])) ? 1: 0)
+
 #define PORT_BUS_INDEX(port) (portmap[port].id)
 
 int
@@ -111,9 +114,8 @@ onlp_sfpi_is_present(onlp_oid_id_t port)
     const port_map_t *pm;
 
     /* check port and then get portmap entry */
-    if (port < 0 || sizeof(portmap)/sizeof(portmap[0]) <= port ) {
-      AIM_LOG_ERROR("invalid port %d\n", port);
-      return ONLP_STATUS_E_INTERNAL;
+    if (!VALID_ID(port)) {
+      return ONLP_STATUS_E_PARAM;
     }
     pm = &portmap[port];
 

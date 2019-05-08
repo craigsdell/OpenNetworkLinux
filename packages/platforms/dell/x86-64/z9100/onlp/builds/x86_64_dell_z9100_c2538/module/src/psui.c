@@ -54,11 +54,18 @@ static onlp_psu_info_t pinfo[] =
     }
 };
 
+#define VALID_ID(id) \
+    ((0 <= id && id < sizeof(pinfo)/sizeof(pinfo[0])) ? 1: 0)
+
 int
 onlp_psui_hdr_get(onlp_oid_t oid, onlp_oid_hdr_t* hdr)
 {
     int id  = ONLP_OID_ID_GET(oid);
 
+    /* Check id is ok */
+    if (!VALID_ID(id)) {
+        return ONLP_STATUS_E_PARAM;
+    }
     *hdr = pinfo[id].hdr; /* Set the onlp_oid_hdr_t */
 
     /* read the register from the CPLD */
@@ -88,6 +95,10 @@ onlp_psui_info_get(onlp_oid_t oid, onlp_psu_info_t* info)
 {
     int id  = ONLP_OID_ID_GET(oid);
 
+    /* Check id is ok */
+    if (!VALID_ID(id)) {
+        return ONLP_STATUS_E_PARAM;
+    }
     *info = pinfo[id]; /* Set the onlp_oid_hdr_t */
 
     /* Get hdr */

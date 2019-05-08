@@ -58,9 +58,6 @@ temp_address_t temp_addresses[] = {
     { 0x272, 0x00 }     /* THERMAL_7 */
 };
 
-#define VALID_THERMAL_ID(id) \
-    ((0 <= id && id < sizeof(temp_addresses)/sizeof(temp_addresses[0])) ? 1: 0)
-
 /* Static values */
 static onlp_thermal_info_t thermal_info_table__[] = {
     { }, /* Not used */
@@ -73,6 +70,9 @@ static onlp_thermal_info_t thermal_info_table__[] = {
     ONLP_CHASSIS_THERMAL_INFO_ENTRY_INIT(THERMAL_6, "Temperature of PSU-1"),
     ONLP_CHASSIS_THERMAL_INFO_ENTRY_INIT(THERMAL_7, "Temperature of PSU-2"),
 };
+
+#define VALID_ID(id) \
+    ((0 <= id && id < sizeof(thermal_info_table__)/sizeof(thermal_info_table__[0])) ? 1: 0)
 
 int
 get_temp_value(int id) {
@@ -90,23 +90,30 @@ get_temp_value(int id) {
 }
 
 int
-onlp_thermali_info_get(onlp_oid_id_t id, onlp_thermal_info_t* info)
+onlp_thermali_info_get(onlp_oid_id_t oid, onlp_thermal_info_t* info)
 {
-    int local_id = ONLP_OID_ID_GET(id);
-    ONLP_OID_INFO_ASSIGN(id, thermal_info_table__, info);
+    int id = ONLP_OID_ID_GET(oid);
 
     /* Check id is ok */
-    if (!VALID_THERMAL_ID(local_id)) {
-        AIM_LOG_ERROR("invalid thermal id %d\n", id);
-        return ONLP_STATUS_E_INTERNAL;
+    if (!VALID_ID(id)) {
+        return ONLP_STATUS_E_PARAM;
     }
-    info->mcelsius = get_temp_value(local_id);
+
+    ONLP_OID_INFO_ASSIGN(oid, thermal_info_table__, info);
+    info->mcelsius = get_temp_value(id);
     return ONLP_STATUS_OK;
 }
 
 int
-onlp_thermali_hdr_get(onlp_oid_id_t id, onlp_oid_hdr_t* hdr)
+onlp_thermali_hdr_get(onlp_oid_id_t oid, onlp_oid_hdr_t* hdr)
 {
+    int id = ONLP_OID_ID_GET(oid);
+
+    /* Check id is ok */
+    if (!VALID_ID(id)) {
+        return ONLP_STATUS_E_PARAM;
+    }
+
     *hdr = thermal_info_table__[id].hdr;
     return ONLP_STATUS_OK;
 }
